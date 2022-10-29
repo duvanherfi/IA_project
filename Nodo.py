@@ -1,7 +1,15 @@
 import numpy as np
-class Node:
-    def __init__(self, entorno):
+class Nodo:
+    def __init__(self, entorno, padre=[]):
+        # • 0 ->  una casilla libre
+        # • 1 ->  un muro
+        # • 2 ->  punto donde inicia Mario
+        # • 3 ->  una estrella
+        # • 4 ->  una flor
+        # • 5 ->  un koopa
+        # • 6 ->  la princesa
         self.entorno = entorno
+        self.padre = padre 
     
     def __str__(self):
         self.mostrar()
@@ -15,7 +23,7 @@ class Node:
     def posm(self):
             for i in range(len(self.entorno)):
                 for j in range(len(self.entorno[i])):
-                    if (self.entorno[i][j]== 3):
+                    if (self.entorno[i][j]== 2):
                         return [i,j]
 
     def mostrar(self):
@@ -36,38 +44,38 @@ class Node:
         if (direccion == 1):
             for i in range(len(hijo)):
                 for j in range(len(hijo[i])):
-                    if (hijo[i][j]== 3):
-                        hijo[i][j-1]= 3
+                    if (hijo[i][j]== 2):
+                        hijo[i][j-1]= 2
                         hijo[i][j]= 0
                         return hijo
-            return hijo
+            
 
         if (direccion == 2):
             for i in range(len(hijo)):
                 for j in range(len(hijo[i])):
-                    if (hijo[i][j]== 3):
-                        hijo[i][j+1]= 3
+                    if (hijo[i][j]== 2):
+                        hijo[i][j+1]= 2
                         hijo[i][j]= 0
                         return hijo
-            return hijo
+            
 
         if (direccion == 3):
             for i in range(len(hijo)):
                 for j in range(len(hijo[i])):
-                    if (hijo[i][j]== 3):
-                        hijo[i-1][j]= 3
+                    if (hijo[i][j]== 2):
+                        hijo[i-1][j]= 2
                         hijo[i][j]= 0
                         return hijo
-            return hijo
+            
 
         if (direccion == 4):
             for i in range(len(hijo)):
                 for j in range(len(hijo[i])):
-                    if (hijo[i][j]== 3):
-                        hijo[i+1][j]= 3
+                    if (hijo[i][j]== 2):
+                        hijo[i+1][j]= 2
                         hijo[i][j]= 0
                         return hijo
-            return hijo
+            
 
        
         
