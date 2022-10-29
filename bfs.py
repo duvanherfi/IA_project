@@ -3,6 +3,8 @@ import numpy as np
 entorno = [[0, 3, 0],[0,0,2]]
 nodo = Node(entorno)
 goal = [1, 2]
+
+# Evitar ciclos
 def val(n, arrn):
     res = 0
     for element in arrn:
@@ -24,31 +26,31 @@ def bfs(node, goal):
         else:
             if (nodo.posm()[1]-1 >= 0):
                 hijo=Node(nodo.mover(1))
-                if val(hijo.entorno, rute)!=1:
-                    stack.append(hijo)
-                else:
+                if np.array_equal(nodo,hijo):
                     pass    
+                else:
+                    stack.append(hijo)
                 
             if (nodo.posm()[1]+1 <= len(nodo.entorno[0])-1):
                 hijo=Node(nodo.mover(2))
-                if  val(hijo.entorno, rute)!=1:
-                    stack.append(hijo)
-                else:
+                if np.array_equal(nodo,hijo):
                     pass    
+                else:
+                    stack.append(hijo)   
                 
             if(nodo.posm()[0]-1 >= 0):
                 hijo=Node(nodo.mover(3))
-                if  val(hijo.entorno, rute)!=1:
-                    stack.append(hijo)
-                else:
+                if np.array_equal(nodo,hijo):
                     pass    
+                else:
+                    stack.append(hijo)    
                 
             if (nodo.posm()[0]+1 <= len(nodo.entorno)-1):
                 hijo=Node(nodo.mover(4))
-                if  val(hijo.entorno, rute)!=1:
-                    stack.append(hijo)
+                if np.array_equal(nodo,hijo):
+                    pass    
                 else:
-                    pass              
+                    stack.append(hijo)             
     return rute
 
 
