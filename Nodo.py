@@ -1,6 +1,6 @@
 import numpy as np
 class Nodo:
-    def __init__(self, entorno, padre=[]):
+    def __init__(self, entorno, padre=None):
         # • 0 ->  una casilla libre
         # • 1 ->  un muro
         # • 2 ->  punto donde inicia Mario
