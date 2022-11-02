@@ -1,6 +1,6 @@
 from Nodo import Nodo
 import numpy as np
-entorno = [[1, 2, 0],[0,0,6]]
+entorno = np.loadtxt('entorno.txt', dtype=int)
 nodo = Nodo(entorno)
 meta = [1, 2]
 
