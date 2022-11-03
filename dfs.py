@@ -1,5 +1,5 @@
-from Nodo import Nodo
-import numpy as np
+from Nodo import Nodo, np
+
 entorno = np.loadtxt('entorno.txt', dtype=int)
 nodo = Nodo(entorno)
 meta = [1, 2]
