@@ -7,16 +7,13 @@ meta = np.where(entorno == 6)
 meta = [meta[0], meta[1]]
 
 # Evitar ciclos
-
-
 def evitar_ciclos(nodo, padre):
     if padre is None:
         return 0
-    elif (np.array_equal(nodo.entorno, padre.entorno)):
+    elif (np.where(nodo.entorno ==2) == np.where(padre.entorno ==2)):
         return 1
     else:
         return evitar_ciclos(nodo, padre.padre)
-
 
 # Imprimir solución
 res = []
@@ -53,48 +50,44 @@ def dfs(nodo, goal):
                 if(nodo_expandido.entorno[nodo_expandido.posm()[0]][nodo_expandido.posm()[1]-1] != 1):
                     hijo = Nodo(nodo_expandido.mover(1), nodo_expandido)
                     # evitar ciclo
-                    if evitar_ciclos(hijo, hijo.padre) == 1:
-                        pass
-                    else:
+                    if evitar_ciclos(hijo, nodo_expandido) != 1:
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
+                   
             # Derecha
             if (nodo_expandido.posm()[1]+1 <= len(nodo_expandido.entorno[0])-1):
                 # Comprobar si hay un muro
                 if(nodo_expandido.entorno[nodo_expandido.posm()[0]][nodo_expandido.posm()[1]+1] != 1):
                     hijo = Nodo(nodo_expandido.mover(2), nodo_expandido)
                     # evitar ciclo
-                    if evitar_ciclos(hijo, hijo.padre) == 1:
-                        pass
-                    else:
+                    if evitar_ciclos(hijo, nodo_expandido) != 1:
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
+                    
             # Arriba
             if(nodo_expandido.posm()[0]-1 >= 0):
                 # Comprobar si hay un muro
                 if(nodo_expandido.entorno[nodo_expandido.posm()[0]-1][nodo_expandido.posm()[1]] != 1):
                     hijo = Nodo(nodo_expandido.mover(3), nodo_expandido)
                    # evitar ciclo
-                    if evitar_ciclos(hijo, hijo.padre) == 1:
-                        pass
-                    else:
+                    if evitar_ciclos(hijo, nodo_expandido) != 1:
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
+                   
             # Abajo
             if (nodo_expandido.posm()[0]+1 <= len(nodo_expandido.entorno)-1):
                 # Comprobar si hay un muro
                 if(nodo_expandido.entorno[nodo_expandido.posm()[0]+1][nodo_expandido.posm()[1]] != 1):
                     hijo = Nodo(nodo_expandido.mover(4), nodo_expandido)
                     # evitar ciclo
-                    if evitar_ciclos(hijo, hijo.padre) == 1:
-                        pass
-                    else:
+                    if evitar_ciclos(hijo, nodo_expandido) != 1:
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
+                   
 
 
 res = dfs(nodo, meta)
