@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 
+
 class Interfaz:
     # Definimos algunos colores
     NEGRO = (0, 0, 0)
@@ -11,8 +12,7 @@ class Interfaz:
     CAFE = (172, 76, 13)
     ROSADO = (249, 128, 186)
 
-
-    def __init__(self, grid = [], pasos=[], paso_actual = 0, largo= 50, alto= 50, margen= 5):
+    def __init__(self, grid=[], pasos=[], paso_actual=0, largo=50, alto=50, margen=5):
         self.bowser = None
         self.flor = None
         self.estrella = None
@@ -96,11 +96,12 @@ class Interfaz:
                 pygame.draw.rect(self.pantalla,
                                  color,
                                  [(self.margen + self.largo) * columna + self.margen,
-                                  (self.margen + self.alto) * fila + self.margen,
+                                  (self.margen + self.alto) *
+                                  fila + self.margen,
                                   self.largo,
                                   self.alto])
 
-                ## pintar imagenes
+                # pintar imagenes
                 if self.grid[fila][columna] == 2:
                     self.dibujar_imagen(self.mario, columna, fila)
                 if self.grid[fila][columna] == 3:
@@ -133,8 +134,3 @@ class Interfaz:
 
     def show_window(self):
         self.main_loop()
-
-
-
-
-
