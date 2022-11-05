@@ -7,13 +7,16 @@ meta = np.where(entorno == 6)
 meta = [meta[0], meta[1]]
 
 # Evitar ciclos
+
+
 def evitar_ciclos(nodo, padre):
     if padre is None:
         return 0
-    elif (np.where(nodo.entorno ==2) == np.where(padre.entorno ==2)):
+    elif (np.where(nodo.entorno == 2) == np.where(padre.entorno == 2)):
         return 1
     else:
         return evitar_ciclos(nodo, padre.padre)
+
 
 # Imprimir solución
 res = []
@@ -54,7 +57,7 @@ def dfs(nodo, goal):
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
-                   
+
             # Derecha
             if (nodo_expandido.posm()[1]+1 <= len(nodo_expandido.entorno[0])-1):
                 # Comprobar si hay un muro
@@ -65,7 +68,7 @@ def dfs(nodo, goal):
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
-                    
+
             # Arriba
             if(nodo_expandido.posm()[0]-1 >= 0):
                 # Comprobar si hay un muro
@@ -76,7 +79,7 @@ def dfs(nodo, goal):
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
-                   
+
             # Abajo
             if (nodo_expandido.posm()[0]+1 <= len(nodo_expandido.entorno)-1):
                 # Comprobar si hay un muro
@@ -87,7 +90,6 @@ def dfs(nodo, goal):
                         stack.insert(pila_index, hijo)
                         pila_index += 1
                         arbol.append(hijo)
-                   
 
 
 res = dfs(nodo, meta)

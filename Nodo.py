@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Nodo:
-    def __init__(self, entorno, padre=None, costo=0, estrella=0, flor=0):
+    def __init__(self, entorno, padre=None, costo=0, estrella=0, flor=0, pisando=0):
         # • 0 ->  una casilla libre
         # • 1 ->  un muro
         # • 2 ->  punto donde inicia Mario
@@ -15,6 +15,7 @@ class Nodo:
         self.costo = costo
         self.estrella = estrella
         self.flor = flor
+        self.pisando = pisando
 
     def __str__(self):
         self.mostrar()
@@ -38,7 +39,7 @@ class Nodo:
                 print("\t", valor, end=" ")
             print()
 
-    def mover(self, direccion):
+    def mover(self, direccion, pisando):
         # Copia del entorno
         hijo = np.zeros((len(self.entorno), len(self.entorno[0])))
         for i in range(len(self.entorno)):
@@ -51,7 +52,7 @@ class Nodo:
                 for j in range(len(hijo[i])):
                     if (hijo[i][j] == 2):
                         hijo[i][j-1] = 2
-                        hijo[i][j] = 0
+                        hijo[i][j] = pisando
                         return hijo
 
         if (direccion == 2):
@@ -59,7 +60,7 @@ class Nodo:
                 for j in range(len(hijo[i])):
                     if (hijo[i][j] == 2):
                         hijo[i][j+1] = 2
-                        hijo[i][j] = 0
+                        hijo[i][j] = pisando
                         return hijo
 
         if (direccion == 3):
@@ -67,7 +68,7 @@ class Nodo:
                 for j in range(len(hijo[i])):
                     if (hijo[i][j] == 2):
                         hijo[i-1][j] = 2
-                        hijo[i][j] = 0
+                        hijo[i][j] = pisando
                         return hijo
 
         if (direccion == 4):
@@ -75,7 +76,7 @@ class Nodo:
                 for j in range(len(hijo[i])):
                     if (hijo[i][j] == 2):
                         hijo[i+1][j] = 2
-                        hijo[i][j] = 0
+                        hijo[i][j] = pisando
                         return hijo
 
     def costoAcumulado(self):
