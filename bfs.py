@@ -35,44 +35,77 @@ def bfs(nodo, goal):
         else:
             # Izquierda
             if (nodo_expandido.posm()[1]-1 >= 0):
+                _posicion = nodo_expandido.entorno[nodo_expandido.posm()[0]][nodo_expandido.posm()[1]-1]
                 # Comprobar si hay un muro
-                if(nodo_expandido.entorno[nodo_expandido.posm()[0]][nodo_expandido.posm()[1]-1] != 1):
-                    hijo = Nodo(nodo_expandido.mover(1), nodo_expandido)
+                if(_posicion != 1):
+                    _pisando =0
+                    if (_posicion == 5):
+                        _pisando = 5
+                    elif (_posicion == 3):
+                        _pisando = 3
+                    elif (_posicion == 4):
+                        _pisando = 4
+                    hijo = Nodo(nodo_expandido.mover(1, nodo_expandido.pisando),nodo_expandido,pisando=_pisando)
                     # evitar devolverse
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
+                    if nodo_expandido.padre != None and np.where(hijo.entorno ==2) == np.where(nodo_expandido.padre.entorno ==2):
                         pass
                     else:
                         stack.append(hijo)
                         arbol.append(hijo)
             # Derecha
             if (nodo_expandido.posm()[1]+1 <= len(nodo_expandido.entorno[0])-1):
+                _posicion = nodo_expandido.entorno[nodo_expandido.posm()[0]][nodo_expandido.posm()[1]+1]
                 # Comprobar si hay un muro
-                if(nodo_expandido.entorno[nodo_expandido.posm()[0]][nodo_expandido.posm()[1]+1] != 1):
-                    hijo = Nodo(nodo_expandido.mover(2), nodo_expandido)
+                if(_posicion != 1):
+                    _pisando =0
+                    if (_posicion == 5):
+                        _pisando = 5
+                    elif (_posicion == 3):
+                        _pisando = 3
+                    elif (_posicion == 4):
+                        _pisando = 4
+                    hijo = Nodo(nodo_expandido.mover(2, nodo_expandido.pisando),nodo_expandido,pisando=_pisando)
                     # evitar devolverse
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
+                    if nodo_expandido.padre != None and np.where(hijo.entorno ==2) == np.where(nodo_expandido.padre.entorno ==2):
                         pass
                     else:
                         stack.append(hijo)
                         arbol.append(hijo)
             # Arriba
             if(nodo_expandido.posm()[0]-1 >= 0):
+                _posicion = nodo_expandido.entorno[nodo_expandido.posm()[0]-1][nodo_expandido.posm()[1]]
+
                 # Comprobar si hay un muro
-                if(nodo_expandido.entorno[nodo_expandido.posm()[0]-1][nodo_expandido.posm()[1]] != 1):
-                    hijo = Nodo(nodo_expandido.mover(3), nodo_expandido)
+                if(_posicion != 1):
+                    _pisando =0
+                    if (_posicion == 5):
+                        _pisando = 5
+                    elif (_posicion == 3):
+                        _pisando = 3
+                    elif (_posicion == 4):
+                        _pisando = 4
+                    hijo = Nodo(nodo_expandido.mover(3, nodo_expandido.pisando),nodo_expandido,pisando=_pisando)
                     # evitar devolverse
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
+                    if nodo_expandido.padre != None and np.where(hijo.entorno ==2) == np.where(nodo_expandido.padre.entorno ==2):
                         pass
                     else:
                         stack.append(hijo)
                         arbol.append(hijo)
             # Abajo
             if (nodo_expandido.posm()[0]+1 <= len(nodo_expandido.entorno)-1):
+                _posicion = nodo_expandido.entorno[nodo_expandido.posm()[0]+1][nodo_expandido.posm()[1]]
                 # Comprobar si hay un muro
-                if(nodo_expandido.entorno[nodo_expandido.posm()[0]+1][nodo_expandido.posm()[1]] != 1):
-                    hijo = Nodo(nodo_expandido.mover(4), nodo_expandido)
+                if(_posicion != 1):
+                    _pisando =0
+                    if (_posicion == 5):
+                        _pisando = 5
+                    elif (_posicion == 3):
+                        _pisando = 3
+                    elif (_posicion == 4):
+                        _pisando = 4
+                    hijo = Nodo(nodo_expandido.mover(4, nodo_expandido.pisando),nodo_expandido,pisando=_pisando)
                     # evitar devolverse
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
+                    if nodo_expandido.padre != None and np.where(hijo.entorno ==2) == np.where(nodo_expandido.padre.entorno ==2):
                         pass
                     else:
                         stack.append(hijo)
