@@ -37,7 +37,6 @@ def ucs(nodo, goal):
         # Obtener el index del nodo con costo acumulado mas bajo
         costoNodos = [nodo.costoAcumulado() for nodo in stack]
         indexMinCostoNodo = costoNodos.index(min(costoNodos))
-        # print(costoNodos)
 
         nodo_expandido = stack.pop(indexMinCostoNodo)
         print(nodo_expandido.entorno)
@@ -46,181 +45,74 @@ def ucs(nodo, goal):
         ruta.append(nodo_expandido.entorno)
         # Comprobar si mario esta en la posición de la princesa
         if (nodo_expandido.posm() == goal):
-            # print("Se encontró a la princesa")
+            print("Se encontró a la princesa")
             return ver_solucion(nodo_expandido)
         else:
             # Izquierda
-            if (nodo_expandido.posm()[1]-1 >= 0):
-                posicion = nodo_expandido.entorno[nodo_expandido.posm()[
-                    0]][nodo_expandido.posm()[1]-1]
-                # Comprobar si no hay un muro
-                if(posicion != 1):
-                    _duracion_estrella = nodo_expandido.estrella
-                    _cantidad_flor = nodo_expandido.flor
-                    _pisando = 0
+            posIzquierda = nodo_expandido.posm()[1]-1
+            if (posIzquierda >= 0):
+                usarOperadores(nodo_expandido.entorno[nodo_expandido.posm()[
+                    0]][posIzquierda], nodo_expandido, 1, stack, arbol)
 
-                    if (nodo_expandido.estrella > 0):  # Tiene estrella
-                        _costo_paso = costo_estrella
-                        _duracion_estrella = nodo_expandido.estrella - 1
-                    # Pisa un koopa y tiene una o mas flores
-                    elif (posicion == 5 and nodo_expandido.flor > 0):
-                        _costo_paso = costo_paso
-                        _cantidad_flor = nodo_expandido.flor - 1
-                    elif (posicion == 5):  # Pisa un koopa
-                        _costo_paso = costo_paso + costo_koopa
-                        _pisando = 5
-                    else:
-                        _costo_paso = costo_paso
-
-                    # Pisa una estrella y tiene una o mas flores
-                    if (posicion == 3 and nodo_expandido.flor > 0):
-                        _pisando = 3
-                    elif (posicion == 3 and nodo_expandido.flor == 0):
-                        _duracion_estrella = _duracion_estrella + duracion_estrella
-
-                    # Pisa una flor y tiene estrella
-                    if (posicion == 4 and nodo_expandido.estrella > 0):
-                        _pisando = 4
-                    elif (posicion == 4 and nodo_expandido.estrella == 0):
-                        _cantidad_flor = _cantidad_flor + cantidad_flor
-
-                    hijo = Nodo(nodo_expandido.mover(1, nodo_expandido.pisando), nodo_expandido,
-                                _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
-
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
-                        pass
-                    else:
-                        stack.append(hijo)
-                        arbol.append(hijo)
             # Derecha
-            if (nodo_expandido.posm()[1]+1 <= len(nodo_expandido.entorno[0])-1):
-                posicion = nodo_expandido.entorno[nodo_expandido.posm()[
-                    0]][nodo_expandido.posm()[1]+1]
-                # Comprobar si no hay un muro
-                if(posicion != 1):
-                    _duracion_estrella = nodo_expandido.estrella
-                    _cantidad_flor = nodo_expandido.flor
-                    _pisando = 0
+            posDerecha = nodo_expandido.posm()[1]+1
+            if (posDerecha <= len(nodo_expandido.entorno[0])-1):
+                usarOperadores(nodo_expandido.entorno[nodo_expandido.posm()[
+                    0]][posDerecha], nodo_expandido, 2, stack, arbol)
 
-                    if (nodo_expandido.estrella > 0):  # Tiene estrella
-                        _costo_paso = costo_estrella
-                        _duracion_estrella = nodo_expandido.estrella - 1
-                    # Pisa un koopa y tiene una o mas flores
-                    elif (posicion == 5 and nodo_expandido.flor > 0):
-                        _costo_paso = costo_paso
-                        _cantidad_flor = nodo_expandido.flor - 1
-                    elif (posicion == 5):  # Pisa un koopa
-                        _costo_paso = costo_paso + costo_koopa
-                        _pisando = 5
-                    else:
-                        _costo_paso = costo_paso
-
-                    # Pisa una estrella y tiene una o mas flores
-                    if (posicion == 3 and nodo_expandido.flor > 0):
-                        _pisando = 3
-                    elif (posicion == 3 and nodo_expandido.flor == 0):
-                        _duracion_estrella = _duracion_estrella + duracion_estrella
-
-                    # Pisa una flor y tiene estrella
-                    if (posicion == 4 and nodo_expandido.estrella > 0):
-                        _pisando = 4
-                    elif (posicion == 4 and nodo_expandido.estrella == 0):
-                        _cantidad_flor = _cantidad_flor + cantidad_flor
-
-                    hijo = Nodo(nodo_expandido.mover(2, nodo_expandido.pisando), nodo_expandido,
-                                _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
-
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
-                        pass
-                    else:
-                        stack.append(hijo)
-                        arbol.append(hijo)
             # Arriba
-            if(nodo_expandido.posm()[0]-1 >= 0):
-                posicion = nodo_expandido.entorno[nodo_expandido.posm()[
-                    0]-1][nodo_expandido.posm()[1]]
-                # Comprobar si no hay un muro
-                if(posicion != 1):
-                    _duracion_estrella = nodo_expandido.estrella
-                    _cantidad_flor = nodo_expandido.flor
-                    _pisando = 0
+            posArriba = nodo_expandido.posm()[0]-1
+            if(posArriba >= 0):
+                usarOperadores(nodo_expandido.entorno[posArriba][nodo_expandido.posm()[
+                               1]], nodo_expandido, 3, stack, arbol)
 
-                    if (nodo_expandido.estrella > 0):  # Tiene estrella
-                        _costo_paso = costo_estrella
-                        _duracion_estrella = nodo_expandido.estrella - 1
-                    # Pisa un koopa y tiene una o mas flores
-                    elif (posicion == 5 and nodo_expandido.flor > 0):
-                        _costo_paso = costo_paso
-                        _cantidad_flor = nodo_expandido.flor - 1
-                    elif (posicion == 5):  # Pisa un koopa
-                        _costo_paso = costo_paso + costo_koopa
-                        _pisando = 5
-                    else:
-                        _costo_paso = costo_paso
-
-                    # Pisa una estrella y tiene una o mas flores
-                    if (posicion == 3 and nodo_expandido.flor > 0):
-                        _pisando = 3
-                    elif (posicion == 3 and nodo_expandido.flor == 0):
-                        _duracion_estrella = _duracion_estrella + duracion_estrella
-
-                    # Pisa una flor y tiene estrella
-                    if (posicion == 4 and nodo_expandido.estrella > 0):
-                        _pisando = 4
-                    elif (posicion == 4 and nodo_expandido.estrella == 0):
-                        _cantidad_flor = _cantidad_flor + cantidad_flor
-
-                    hijo = Nodo(nodo_expandido.mover(3, nodo_expandido.pisando), nodo_expandido,
-                                _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
-
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
-                        pass
-                    else:
-                        stack.append(hijo)
-                        arbol.append(hijo)
             # Abajo
-            if (nodo_expandido.posm()[0]+1 <= len(nodo_expandido.entorno)-1):
-                posicion = nodo_expandido.entorno[nodo_expandido.posm()[
-                    0]+1][nodo_expandido.posm()[1]]
-                # Comprobar si no hay un muro
-                if(posicion != 1):
-                    _duracion_estrella = nodo_expandido.estrella
-                    _cantidad_flor = nodo_expandido.flor
-                    _pisando = 0
+            posAbajo = nodo_expandido.posm()[0]+1
+            if (posAbajo <= len(nodo_expandido.entorno)-1):
+                usarOperadores(nodo_expandido.entorno[posAbajo][nodo_expandido.posm()[
+                               1]], nodo_expandido, 4, stack, arbol)
 
-                    if (nodo_expandido.estrella > 0):  # Tiene estrella
-                        _costo_paso = costo_estrella
-                        _duracion_estrella = nodo_expandido.estrella - 1
-                    # Pisa un koopa y tiene una o mas flores
-                    elif (posicion == 5 and nodo_expandido.flor > 0):
-                        _costo_paso = costo_paso
-                        _cantidad_flor = nodo_expandido.flor - 1
-                    elif (posicion == 5):  # Pisa un koopa
-                        _costo_paso = costo_paso + costo_koopa
-                        _pisando = 5
-                    else:
-                        _costo_paso = costo_paso
 
-                    # Pisa una estrella y tiene una o mas flores
-                    if (posicion == 3 and nodo_expandido.flor > 0):
-                        _pisando = 3
-                    elif (posicion == 3 and nodo_expandido.flor == 0):
-                        _duracion_estrella = _duracion_estrella + duracion_estrella
+def usarOperadores(posicion, nodo_expandido, mover, stack, arbol):
+    # Comprobar si no hay un muro
+    if(posicion != 1):
+        _duracion_estrella = nodo_expandido.estrella
+        _cantidad_flor = nodo_expandido.flor
+        _pisando = 0
 
-                    # Pisa una flor y tiene estrella
-                    if (posicion == 4 and nodo_expandido.estrella > 0):
-                        _pisando = 4
-                    elif (posicion == 4 and nodo_expandido.estrella == 0):
-                        _cantidad_flor = _cantidad_flor + cantidad_flor
+        if (nodo_expandido.estrella > 0):  # Tiene estrella
+            _costo_paso = costo_estrella
+            _duracion_estrella = nodo_expandido.estrella - 1
+        # Pisa un koopa y tiene una o mas flores
+        elif (posicion == 5 and nodo_expandido.flor > 0):
+            _costo_paso = costo_paso
+            _cantidad_flor = nodo_expandido.flor - 1
+        elif (posicion == 5):  # Pisa un koopa
+            _costo_paso = costo_paso + costo_koopa
+            _pisando = 5
+        else:
+            _costo_paso = costo_paso
 
-                    hijo = Nodo(nodo_expandido.mover(4, nodo_expandido.pisando), nodo_expandido,
-                                _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
+        # Pisa una estrella y tiene una o mas flores
+        if (posicion == 3 and nodo_expandido.flor > 0):
+            _pisando = 3
+        elif (posicion == 3 and nodo_expandido.flor == 0):
+            _duracion_estrella = _duracion_estrella + duracion_estrella
 
-                    if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
-                        pass
-                    else:
-                        stack.append(hijo)
-                        arbol.append(hijo)
+        # Pisa una flor y tiene estrella
+        if (posicion == 4 and nodo_expandido.estrella > 0):
+            _pisando = 4
+        elif (posicion == 4 and nodo_expandido.estrella == 0):
+            _cantidad_flor = _cantidad_flor + cantidad_flor
+
+        hijo = Nodo(nodo_expandido.mover(mover, nodo_expandido.pisando), nodo_expandido,
+                    _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
+
+        if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
+            pass
+        else:
+            stack.append(hijo)
+            arbol.append(hijo)
 
 
 res = ucs(nodo, meta)
