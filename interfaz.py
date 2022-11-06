@@ -33,7 +33,7 @@ class Interfaz:
         largo_m = len(self.grid[0])
         margen_total = ((self.margen * 10) + 5)
         # Establecemos el LARGO y ALTO de la pantalla
-        dimension_ventana = [largo_m * margen_total, largo_m * margen_total]
+        dimension_ventana = [largo_m * margen_total, alto_m * margen_total]
         self.pantalla = pygame.display.set_mode(dimension_ventana)
         # Establecemos el título de la pantalla.
         pygame.display.set_caption("Proyecto 1 IA")
