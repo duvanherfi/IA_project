@@ -4,7 +4,7 @@ from interfaz import Interfaz
 entorno = np.loadtxt('entorno.txt', dtype=int)
 nodo = Nodo(entorno)
 meta = np.where(entorno == 6)
-meta = [meta[0], meta[1]]
+meta = np.array([meta[0][0], meta[1][0]])
 
 # Evitar ciclos
 def evitar_ciclos(nodo, padre):
@@ -40,7 +40,7 @@ def dfs(nodo, goal):
         nodo_expandido = stack.pop(0)
         ruta.append(nodo_expandido.entorno)
         pila_index = 0
-        if (nodo_expandido.posm() == goal):
+        if (np.array_equal(nodo_expandido.posm(), goal)):
             print("Se encontró a la princesa")
             return ver_solucion(nodo_expandido)
         else:

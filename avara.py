@@ -1,5 +1,6 @@
 from Nodo import Nodo, np
 from interfaz import Interfaz
+#import pdb; pdb.set_trace()
 
 costo_paso = 1
 costo_estrella = 0.5
@@ -26,25 +27,24 @@ def ver_solucion(nodo):
 # Búsqueda por costo uniforme, evitando devolverse
 
 
-def ucs(nodo, goal):
+def avara(nodo, goal):
     stack = []
     arbol = []
     stack.append(nodo)
     arbol.append(nodo)
     ruta = []
     while len(stack) > 0:
+        #breakpoint()
         # Obtener el index del nodo con costo acumulado mas bajo
-        costoNodos = [nodo.costoAcumulado() for nodo in stack]
-        indexMinCostoNodo = costoNodos.index(min(costoNodos))
+        heuristica_nodos = [nodo.heuristica(goal) for nodo in stack]
+        index_min_heurisitca_nodo = heuristica_nodos.index(min(heuristica_nodos))
 
-        nodo_expandido = stack.pop(indexMinCostoNodo)
+        nodo_expandido = stack.pop(index_min_heurisitca_nodo)
         print(nodo_expandido.entorno)
-        print(nodo_expandido.costoAcumulado())
+        print(nodo_expandido.heuristica(goal))
         print('-----------------------------')
         ruta.append(nodo_expandido.entorno)
         # Comprobar si mario esta en la posición de la princesa
-        print(nodo_expandido.posm())
-        print(goal)
         if (np.array_equal(nodo_expandido.posm(), goal)):
             print("Se encontró a la princesa")
             return ver_solucion(nodo_expandido)
@@ -58,21 +58,26 @@ def ucs(nodo, goal):
             # Derecha
             posDerecha = nodo_expandido.posm()[1]+1
             if (posDerecha <= len(nodo_expandido.entorno[0])-1):
-                usarOperadores(nodo_expandido.entorno[nodo_expandido.posm()[
-                    0]][posDerecha], nodo_expandido, 2, stack, arbol)
+                usarOperadores(
+                    nodo_expandido.entorno[nodo_expandido.posm()[0]][posDerecha],
+                    nodo_expandido, 2, stack, arbol
+                )
 
             # Arriba
             posArriba = nodo_expandido.posm()[0]-1
             if(posArriba >= 0):
-                usarOperadores(nodo_expandido.entorno[posArriba][nodo_expandido.posm()[
-                               1]], nodo_expandido, 3, stack, arbol)
+                usarOperadores(
+                    nodo_expandido.entorno[posArriba][nodo_expandido.posm()[1]],
+                    nodo_expandido, 3, stack, arbol
+                )
 
             # Abajo
             posAbajo = nodo_expandido.posm()[0]+1
             if (posAbajo <= len(nodo_expandido.entorno)-1):
-                usarOperadores(nodo_expandido.entorno[posAbajo][nodo_expandido.posm()[
-                               1]], nodo_expandido, 4, stack, arbol)
-
+                usarOperadores(
+                    nodo_expandido.entorno[posAbajo][nodo_expandido.posm()[1]],
+                    nodo_expandido, 4, stack, arbol
+                )
 
 def usarOperadores(posicion, nodo_expandido, mover, stack, arbol):
     # Comprobar si no hay un muro
@@ -109,14 +114,11 @@ def usarOperadores(posicion, nodo_expandido, mover, stack, arbol):
         hijo = Nodo(nodo_expandido.mover(mover, nodo_expandido.pisando), nodo_expandido,
                     _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
 
-        if nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno):
-            pass
-        else:
+        if not (nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno)):
             stack.append(hijo)
             arbol.append(hijo)
 
-
-res = ucs(nodo, meta)
+res = avara(nodo, meta)
 
 # Imprimir los nodos expandidos contenidos en la ruta
 for entorno in res:

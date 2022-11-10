@@ -27,10 +27,12 @@ class Nodo:
             return 0
 
     def posm(self):
-        for i in range(len(self.entorno)):
-            for j in range(len(self.entorno[i])):
-                if (self.entorno[i][j] == 2):
-                    return [i, j]
+        pos_m = np.where(self.entorno == 2)
+        return np.array([pos_m[0][0], pos_m[1][0]])
+
+    def posp(self):
+        pos_p = np.where(self.entorno == 6)
+        return np.array([pos_p[0][0], pos_p[1][0]])
 
     def mostrar(self):
         print("La matriz es la siguiente:")
@@ -41,10 +43,7 @@ class Nodo:
 
     def mover(self, direccion, pisando):
         # Copia del entorno
-        hijo = np.zeros((len(self.entorno), len(self.entorno[0])))
-        for i in range(len(self.entorno)):
-            for j in range(len(self.entorno[i])):
-                hijo[i][j] = self.entorno[i][j]
+        hijo = np.copy(self.entorno)
 
         # 1->left, 2->Right, 3->Up, 4->Down
         if (direccion == 1):
@@ -84,3 +83,7 @@ class Nodo:
             return self.costo
         else:
             return self.costo + self.padre.costoAcumulado()
+
+    def heuristica(self, goal):
+        return sum(np.absolute(goal - self.posm()))
+

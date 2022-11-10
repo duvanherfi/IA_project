@@ -1,10 +1,9 @@
-from Nodo import Nodo
+from Nodo import Nodo, np
 from interfaz import Interfaz
-import numpy as np
 entorno = np.loadtxt('entorno.txt', dtype=int)
 nodo = Nodo(entorno)
 meta = np.where(entorno == 6)
-meta = [meta[0], meta[1]]
+meta = np.array([meta[0][0], meta[1][0]])
 
 res = []
 
@@ -29,7 +28,7 @@ def bfs(nodo, goal):
     while len(stack) > 0:
         nodo_expandido = stack.pop(0)
         ruta.append(nodo_expandido.entorno)
-        if (nodo_expandido.posm() == goal):
+        if (np.array_equal(nodo_expandido.posm(), goal)):
             print("Se encontró a la princesa")
             return ver_solucion(nodo_expandido)
         else:
