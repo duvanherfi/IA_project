@@ -10,7 +10,7 @@ meta = np.array([meta[0][0], meta[1][0]])
 def evitar_ciclos(nodo, padre):
     if padre is None:
         return 0
-    elif (np.where(nodo.entorno ==2) == np.where(padre.entorno ==2)):
+    elif (np.where(nodo.entorno == 2) == np.where(padre.entorno == 2)):
         return 1
     else:
         return evitar_ciclos(nodo, padre.padre)

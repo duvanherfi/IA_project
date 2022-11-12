@@ -24,10 +24,18 @@ def ver_solucion(nodo):
     else:
         return ver_solucion(padre)
 
+def evitar_ciclos(nodo, padre):
+    if padre is None:
+        return 0
+    elif (np.where(nodo.entorno == 2) == np.where(padre.entorno == 2)):
+        return 1
+    else:
+        return evitar_ciclos(nodo, padre.padre)
+
 # Búsqueda por costo uniforme, evitando devolverse
 
 
-def avara(nodo, goal):
+def a_estrella(nodo, goal):
     stack = []
     arbol = []
     stack.append(nodo)
@@ -115,10 +123,11 @@ def usarOperadores(posicion, nodo_expandido, mover, stack, arbol):
                     _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
 
         if not (nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno)):
-            stack.append(hijo)
-            arbol.append(hijo)
+            if evitar_ciclos(hijo, nodo_expandido) != 1:
+                stack.append(hijo)
+                arbol.append(hijo)
 
-res = avara(nodo, meta)
+res = a_estrella(nodo, meta)
 
 # Imprimir los nodos expandidos contenidos en la ruta
 for entorno in res:

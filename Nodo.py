@@ -30,10 +30,6 @@ class Nodo:
         pos_m = np.where(self.entorno == 2)
         return np.array([pos_m[0][0], pos_m[1][0]])
 
-    def posp(self):
-        pos_p = np.where(self.entorno == 6)
-        return np.array([pos_p[0][0], pos_p[1][0]])
-
     def mostrar(self):
         print("La matriz es la siguiente:")
         for fila in self.entorno:

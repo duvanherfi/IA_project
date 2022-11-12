@@ -62,7 +62,7 @@ class Interfaz:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 self.salir = True
-            if evento.type == pygame.MOUSEBUTTONDOWN and len(self.pasos) > 0:
+            if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1 and len(self.pasos) > 0:
                 if self.paso_actual + 1 >= len(self.pasos):
                     self.paso_actual = 0
                 else:
