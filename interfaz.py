@@ -2,6 +2,35 @@ import pygame
 import numpy as np
 
 
+class Cursor(pygame.Rect):
+    def __init__(self):
+        pygame.Rect.__init__(self, 0, 0, 1, 1)
+
+    def updatecursor(self):
+        (self.left, self.top) = pygame.mouse.get_pos()
+
+class Button(pygame.sprite.Sprite):
+
+    def __init__(self, image1, image2, x=0, y=10):
+        self.imagen_normal = image1
+        self.imagen_seleccion = image2
+        self.imagen_actual = self.imagen_normal
+        self.rect=self.imagen_actual.get_rect()
+        self.rect.left, self.rect.top = (x, y)
+        self.x = x
+        self.y = y
+
+    def update(self, pantalla, cursor, show):
+        if cursor.colliderect(self.rect):
+            self.imagen_actual=self.imagen_seleccion
+        else:
+            self.imagen_actual = self.imagen_normal
+        if show:
+            self.rect.left, self.rect.top = (self.x, self.y)
+            pantalla.blit(self.imagen_actual, self.rect)
+        else:
+            self.rect.left, self.rect.top = (-100, -100)
+
 class Interfaz:
     # Definimos algunos colores
     NEGRO = (0, 0, 0)
@@ -13,11 +42,9 @@ class Interfaz:
     ROSADO = (249, 128, 186)
 
     def __init__(self, grid=[], pasos=[], paso_actual=0, largo=50, alto=50, margen=5):
-        self.bowser = None
-        self.flor = None
-        self.estrella = None
-        self.princesa = None
-        self.mario = None
+        # Inicializamos pygame
+        pygame.init()
+        # variables
         self.salir = False
         self.grid = pasos[paso_actual] if len(pasos) > 0 else grid
         self.pasos = pasos
@@ -27,19 +54,56 @@ class Interfaz:
         self.alto = alto
         # Establecemos el margen entre las celdas.
         self.margen = margen
-        # Inicializamos pygame
-        pygame.init()
         alto_m = len(self.grid)
         largo_m = len(self.grid[0])
         margen_total = ((self.margen * 10) + 5)
         # Establecemos el LARGO y ALTO de la pantalla
-        dimension_ventana = [largo_m * margen_total, alto_m * margen_total]
-        self.pantalla = pygame.display.set_mode(dimension_ventana)
+        self.dimension_ventana = [largo_m * margen_total+200, alto_m * margen_total]
+        self.pantalla = pygame.display.set_mode(self.dimension_ventana)
         # Establecemos el título de la pantalla.
         pygame.display.set_caption("Proyecto 1 IA")
-        self.inicializar_imagenes()
         # Lo usamos para establecer cuán rápido de refresca la pantalla.
         self.reloj = pygame.time.Clock()
+        #Se usa para saber que botones se muestran
+        self.estado_interfaz = 0
+        # Texto informes
+        self.fuente = pygame.font.SysFont("Gabriola", 22)
+        self.textos = ["Tiempo de cómputo:", "Profundidad del árbol:", "Nodos expandidos:"]
+        # Inicializamos imagenes
+        self.bowser = None
+        self.flor = None
+        self.estrella = None
+        self.princesa = None
+        self.mario = None
+        self.img_busq_no_inf = None
+        self.img_busq_no_inf_2 = None
+        self.img_busq_inf = None
+        self.img_busq_inf_2 = None
+        self.img_amplitud = None
+        self.img_amplitud_2 = None
+        self.img_costo_u = None
+        self.img_costo_u_2 = None
+        self.img_profundidad = None
+        self.img_profundidad_2 = None
+        self.img_avara = None
+        self.img_avara_2 = None
+        self.img_a_est = None
+        self.img_a_est_2 = None
+        self.img_atras = None
+        self.img_atras_2 = None
+        self.inicializar_imagenes()
+        # cursor
+        self.cursor = Cursor()
+        # Botones
+        self.atras = None
+        self.busqueda_no_inf = None
+        self.busqueda_inf = None
+        self.amplitud = None
+        self.costo = None
+        self.profundidad = None
+        self.avara = None
+        self.a_estrella = None
+        self.inicializar_botones()
 
     def inicializar_imagenes(self):
         self.mario = pygame.image.load("img/mario.png").convert()
@@ -52,27 +116,102 @@ class Interfaz:
         self.flor.set_colorkey(self.NEGRO)
         self.bowser = pygame.image.load("img/bowser.png").convert()
         self.bowser.set_colorkey(self.NEGRO)
+        self.img_busq_no_inf = pygame.image.load("img/boton1.png").convert()
+        self.img_busq_no_inf.set_colorkey(self.NEGRO)
+        self.img_busq_no_inf_2 = pygame.image.load("img/boton1_2.png").convert()
+        self.img_busq_no_inf_2.set_colorkey(self.NEGRO)
+        self.img_busq_inf = pygame.image.load("img/boton2.png").convert()
+        self.img_busq_inf.set_colorkey(self.NEGRO)
+        self.img_busq_inf_2 = pygame.image.load("img/boton2_2.png").convert()
+        self.img_busq_inf_2.set_colorkey(self.NEGRO)
+        self.img_amplitud = pygame.image.load("img/boton3.png").convert()
+        self.img_amplitud.set_colorkey(self.NEGRO)
+        self.img_amplitud_2 = pygame.image.load("img/boton3_2.png").convert()
+        self.img_amplitud_2.set_colorkey(self.NEGRO)
+        self.img_costo_u = pygame.image.load("img/boton4.png").convert()
+        self.img_costo_u.set_colorkey(self.NEGRO)
+        self.img_costo_u_2 = pygame.image.load("img/boton4_2.png").convert()
+        self.img_costo_u_2.set_colorkey(self.NEGRO)
+        self.img_profundidad = pygame.image.load("img/boton5.png").convert()
+        self.img_profundidad.set_colorkey(self.NEGRO)
+        self.img_profundidad_2 = pygame.image.load("img/boton5_2.png").convert()
+        self.img_profundidad_2.set_colorkey(self.NEGRO)
+        self.img_avara = pygame.image.load("img/boton6.png").convert()
+        self.img_avara.set_colorkey(self.NEGRO)
+        self.img_avara_2 = pygame.image.load("img/boton6_2.png").convert()
+        self.img_avara_2.set_colorkey(self.NEGRO)
+        self.img_a_est = pygame.image.load("img/boton7.png").convert()
+        self.img_a_est.set_colorkey(self.NEGRO)
+        self.img_a_est_2 = pygame.image.load("img/boton7_2.png").convert()
+        self.img_a_est_2.set_colorkey(self.NEGRO)
+        self.img_atras = pygame.image.load("img/boton8.png").convert()
+        self.img_atras.set_colorkey(self.NEGRO)
+        self.img_atras_2 = pygame.image.load("img/boton8_2.png").convert()
+        self.img_atras_2.set_colorkey(self.NEGRO)
+
+    def inicializar_botones(self):
+        # Botones
+        self.atras = Button(self.img_atras, self.img_atras_2)
+        pos_y_img = (self.margen * 10) * ((len(self.grid) / 2) - 1)
+        self.busqueda_no_inf = Button(self.img_busq_no_inf, self.img_busq_no_inf_2, 0, pos_y_img)
+        self.busqueda_inf = Button(self.img_busq_inf, self.img_busq_inf_2, 0, pos_y_img + 80)
+        #--------------------------------------------
+        self.avara = Button(self.img_avara, self.img_avara_2, 0, pos_y_img)
+        self.a_estrella = Button(self.img_a_est, self.img_a_est_2, 0, pos_y_img + 80)
+        # --------------------------------------------
+        pos_y_img = (self.margen * 10) * (len(self.grid) / 3)
+        self.amplitud = Button(self.img_amplitud, self.img_amplitud_2, 0, pos_y_img)
+        self.costo = Button(self.img_costo_u, self.img_costo_u_2, 0, pos_y_img + 80)
+        self.profundidad = Button(self.img_profundidad, self.img_profundidad_2, 0, pos_y_img + 160)
+
 
     def set_pos_ant(self):
         pos_ant = list(map(lambda x: x[0], np.where(self.grid == 2)))
         self.grid[pos_ant[0]][pos_ant[1]] = 0
-        print("Coordenadas de la retícula anterior: ", pos_ant)
+
+    def update_pos_pasos(self, paso):
+        if self.paso_actual + paso >= len(self.pasos):
+            self.paso_actual = 0
+        else:
+            self.paso_actual += paso
 
     def loop_events(self):
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 self.salir = True
-            if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1 and len(self.pasos) > 0:
-                if self.paso_actual + 1 >= len(self.pasos):
-                    self.paso_actual = 0
-                else:
-                    self.paso_actual += 1
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if evento.button == 1:
+                    if self.cursor.colliderect(self.atras):
+                        self.estado_interfaz = 0
+                    if self.cursor.colliderect(self.busqueda_no_inf):
+                        self.estado_interfaz = 1
+                    if self.cursor.colliderect(self.busqueda_inf):
+                        self.estado_interfaz = 2
+                    if self.cursor.colliderect(self.amplitud):
+                        pass
+                    if self.cursor.colliderect(self.costo):
+                        pass
+                    if self.cursor.colliderect(self.profundidad):
+                        pass
+                    if self.cursor.colliderect(self.avara):
+                        pass
+                    if self.cursor.colliderect(self.a_estrella):
+                        pass
+
+            if evento.type == pygame.KEYDOWN:
+                if len(self.pasos) > 0:
+                    if evento.key == pygame.K_RIGHT:
+                        self.update_pos_pasos(1)
+                    if evento.key == pygame.K_LEFT:
+                        self.update_pos_pasos(-1)
+
+
 
     def dibujar_imagen(self, imagen, columna, fila):
         self.pantalla.blit(
             imagen,
             [
-                (self.margen + self.largo) * columna + self.margen,
+                (self.margen + self.largo) * columna + self.margen + 200,
                 (self.margen + self.alto) * fila + self.margen
             ]
         )
@@ -95,9 +234,8 @@ class Interfaz:
 
                 pygame.draw.rect(self.pantalla,
                                  color,
-                                 [(self.margen + self.largo) * columna + self.margen,
-                                  (self.margen + self.alto) *
-                                  fila + self.margen,
+                                 [(self.margen + self.largo) * columna + self.margen + 200,
+                                  (self.margen + self.alto) * fila + self.margen,
                                   self.largo,
                                   self.alto])
 
@@ -126,6 +264,24 @@ class Interfaz:
             # Limitamos a 60 fotogramas por segundo.
             self.reloj.tick(60)
 
+            # actualizar rectangulo de cursor
+            self.cursor.updatecursor()
+            self.busqueda_no_inf.update(self.pantalla, self.cursor, self.estado_interfaz == 0)
+            self.busqueda_inf.update(self.pantalla, self.cursor, self.estado_interfaz == 0)
+            self.atras.update(self.pantalla, self.cursor, self.estado_interfaz != 0)
+            self.amplitud.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
+            self.costo.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
+            self.profundidad.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
+            self.avara.update(self.pantalla, self.cursor, self.estado_interfaz == 2)
+            self.a_estrella.update(self.pantalla, self.cursor, self.estado_interfaz == 2)
+
+            for index, texto in enumerate(self.textos):
+                self.pantalla.blit(
+                    self.fuente.render(texto, 0, self.BLANCO),
+                    (0, self.dimension_ventana[1] - 50 * (index + 1))
+                )
+
+
             # Avanzamos y actualizamos la pantalla con lo que hemos dibujado.
             pygame.display.flip()
 
@@ -134,3 +290,6 @@ class Interfaz:
 
     def show_window(self):
         self.main_loop()
+
+#grid = np.loadtxt('entorno.txt', dtype=int)
+#Interfaz(grid=grid).show_window()
