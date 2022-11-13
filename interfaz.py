@@ -59,7 +59,7 @@ class Interfaz:
         largo_m = len(self.grid[0])
         margen_total = ((self.margen * 10) + 5)
         # Establecemos el LARGO y ALTO de la pantalla
-        self.dimension_ventana = [largo_m * margen_total+200, alto_m * margen_total]
+        self.dimension_ventana = [400 + (largo_m * margen_total), 200 + (alto_m * margen_total)]
         self.pantalla = pygame.display.set_mode(self.dimension_ventana)
         # Establecemos el título de la pantalla.
         pygame.display.set_caption("Proyecto 1 IA")
@@ -154,7 +154,7 @@ class Interfaz:
 
     def inicializar_botones(self):
         # Botones
-        self.atras = Button(self.img_atras, self.img_atras_2)
+        self.atras = Button(self.img_atras, self.img_atras_2, self.dimension_ventana[0] - 200, (self.dimension_ventana[1]/2) -50)
         pos_y_img = (self.margen * 10) * ((len(self.grid) / 2) - 1)
         self.busqueda_no_inf = Button(self.img_busq_no_inf, self.img_busq_no_inf_2, 0, pos_y_img)
         self.busqueda_inf = Button(self.img_busq_inf, self.img_busq_inf_2, 0, pos_y_img + 80)
@@ -313,12 +313,18 @@ class Interfaz:
             self.profundidad.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
             self.avara.update(self.pantalla, self.cursor, self.estado_interfaz == 2)
             self.a_estrella.update(self.pantalla, self.cursor, self.estado_interfaz == 2)
-
+            pos_x = 0
             for index, texto in enumerate(self.textos):
+                if index == 1:
+                    pos_x = (self.dimension_ventana[0] / 2) - 90
+                if index == 2:
+                    pos_x = self.dimension_ventana[0] - 200
+
                 self.pantalla.blit(
                     self.fuente.render(texto + str(self.resultados[index]), 0, self.BLANCO),
-                    (0, self.dimension_ventana[1] - 50 * (index + 1))
+                    (pos_x , self.dimension_ventana[1] - 50)
                 )
+
 
 
             # Avanzamos y actualizamos la pantalla con lo que hemos dibujado.
