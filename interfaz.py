@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
-
-
+from busqueda import Busqueda
+import time
 class Cursor(pygame.Rect):
     def __init__(self):
         pygame.Rect.__init__(self, 0, 0, 1, 1)
@@ -47,6 +47,7 @@ class Interfaz:
         # variables
         self.salir = False
         self.grid = pasos[paso_actual] if len(pasos) > 0 else grid
+        self.grid_inicial = self.grid
         self.pasos = pasos
         self.paso_actual = paso_actual
         # Establecemos el LARGO y ALTO de cada celda de la retícula.
@@ -68,7 +69,8 @@ class Interfaz:
         self.estado_interfaz = 0
         # Texto informes
         self.fuente = pygame.font.SysFont("Gabriola", 22)
-        self.textos = ["Tiempo de cómputo:", "Profundidad del árbol:", "Nodos expandidos:"]
+        self.textos = ["Tiempo de cómputo: ", "Profundidad del árbol: ", "Nodos expandidos: "]
+        self.resultados = ["", "", ""]
         # Inicializamos imagenes
         self.bowser = None
         self.flor = None
@@ -104,6 +106,7 @@ class Interfaz:
         self.avara = None
         self.a_estrella = None
         self.inicializar_botones()
+        self.busuqeda = Busqueda(self.grid_inicial)
 
     def inicializar_imagenes(self):
         self.mario = pygame.image.load("img/mario.png").convert()
@@ -170,10 +173,13 @@ class Interfaz:
         self.grid[pos_ant[0]][pos_ant[1]] = 0
 
     def update_pos_pasos(self, paso):
-        if self.paso_actual + paso >= len(self.pasos):
+        op = self.paso_actual + paso
+        if op >= len(self.pasos):
             self.paso_actual = 0
+        elif op < 0:
+            self.paso_actual = len(self.pasos) - 1
         else:
-            self.paso_actual += paso
+            self.paso_actual = op
 
     def loop_events(self):
         for evento in pygame.event.get():
@@ -183,20 +189,55 @@ class Interfaz:
                 if evento.button == 1:
                     if self.cursor.colliderect(self.atras):
                         self.estado_interfaz = 0
+                        self.pasos = []
+                        self.grid = self.grid_inicial
+                        self.resultados = ["", "", ""]
+                        self.busuqeda.reset_result()
                     if self.cursor.colliderect(self.busqueda_no_inf):
                         self.estado_interfaz = 1
                     if self.cursor.colliderect(self.busqueda_inf):
                         self.estado_interfaz = 2
                     if self.cursor.colliderect(self.amplitud):
-                        pass
+                        inicio = time.time()
+                        self.pasos = self.busuqeda.bfs()
+                        self.busuqeda.reset_result()
+                        self.pasos.reverse()
+                        fin = time.time()
+                        self.grid = self.pasos[0]
+                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
                     if self.cursor.colliderect(self.costo):
-                        pass
+                        inicio = time.time()
+                        self.pasos = self.busuqeda.ucs()
+                        self.busuqeda.reset_result()
+                        self.pasos.reverse()
+                        fin = time.time()
+                        self.grid = self.pasos[0]
+                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
                     if self.cursor.colliderect(self.profundidad):
-                        pass
+                        inicio = time.time()
+                        self.pasos = self.busuqeda.dfs()
+                        self.busuqeda.reset_result()
+                        self.pasos.reverse()
+                        fin = time.time()
+                        self.grid = self.pasos[0]
+                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
                     if self.cursor.colliderect(self.avara):
-                        pass
+                        inicio = time.time()
+                        self.pasos = self.busuqeda.avara()
+                        self.busuqeda.reset_result()
+                        self.pasos.reverse()
+                        fin = time.time()
+                        self.grid = self.pasos[0]
+                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
+
                     if self.cursor.colliderect(self.a_estrella):
-                        pass
+                        inicio = time.time()
+                        self.pasos = self.busuqeda.a_estrella()
+                        self.busuqeda.reset_result()
+                        self.pasos.reverse()
+                        fin = time.time()
+                        self.grid = self.pasos[0]
+                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
 
             if evento.type == pygame.KEYDOWN:
                 if len(self.pasos) > 0:
@@ -204,8 +245,6 @@ class Interfaz:
                         self.update_pos_pasos(1)
                     if evento.key == pygame.K_LEFT:
                         self.update_pos_pasos(-1)
-
-
 
     def dibujar_imagen(self, imagen, columna, fila):
         self.pantalla.blit(
@@ -277,7 +316,7 @@ class Interfaz:
 
             for index, texto in enumerate(self.textos):
                 self.pantalla.blit(
-                    self.fuente.render(texto, 0, self.BLANCO),
+                    self.fuente.render(texto + str(self.resultados[index]), 0, self.BLANCO),
                     (0, self.dimension_ventana[1] - 50 * (index + 1))
                 )
 
@@ -291,5 +330,5 @@ class Interfaz:
     def show_window(self):
         self.main_loop()
 
-#grid = np.loadtxt('entorno.txt', dtype=int)
-#Interfaz(grid=grid).show_window()
+grid = np.loadtxt('entorno.txt', dtype=int)
+Interfaz(grid=grid).show_window()
