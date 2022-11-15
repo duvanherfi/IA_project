@@ -2,6 +2,8 @@ import pygame
 import numpy as np
 from busqueda import Busqueda
 import time
+
+
 class Cursor(pygame.Rect):
     def __init__(self):
         pygame.Rect.__init__(self, 0, 0, 1, 1)
@@ -9,20 +11,21 @@ class Cursor(pygame.Rect):
     def updatecursor(self):
         (self.left, self.top) = pygame.mouse.get_pos()
 
+
 class Button(pygame.sprite.Sprite):
 
     def __init__(self, image1, image2, x=0, y=10):
         self.imagen_normal = image1
         self.imagen_seleccion = image2
         self.imagen_actual = self.imagen_normal
-        self.rect=self.imagen_actual.get_rect()
+        self.rect = self.imagen_actual.get_rect()
         self.rect.left, self.rect.top = (x, y)
         self.x = x
         self.y = y
 
     def update(self, pantalla, cursor, show):
         if cursor.colliderect(self.rect):
-            self.imagen_actual=self.imagen_seleccion
+            self.imagen_actual = self.imagen_seleccion
         else:
             self.imagen_actual = self.imagen_normal
         if show:
@@ -30,6 +33,7 @@ class Button(pygame.sprite.Sprite):
             pantalla.blit(self.imagen_actual, self.rect)
         else:
             self.rect.left, self.rect.top = (-100, -100)
+
 
 class Interfaz:
     # Definimos algunos colores
@@ -59,17 +63,19 @@ class Interfaz:
         largo_m = len(self.grid[0])
         margen_total = ((self.margen * 10) + 5)
         # Establecemos el LARGO y ALTO de la pantalla
-        self.dimension_ventana = [400 + (largo_m * margen_total), 200 + (alto_m * margen_total)]
+        self.dimension_ventana = [
+            400 + (largo_m * margen_total), 200 + (alto_m * margen_total)]
         self.pantalla = pygame.display.set_mode(self.dimension_ventana)
         # Establecemos el título de la pantalla.
         pygame.display.set_caption("Proyecto 1 IA")
         # Lo usamos para establecer cuán rápido de refresca la pantalla.
         self.reloj = pygame.time.Clock()
-        #Se usa para saber que botones se muestran
+        # Se usa para saber que botones se muestran
         self.estado_interfaz = 0
         # Texto informes
         self.fuente = pygame.font.SysFont("Gabriola", 22)
-        self.textos = ["Tiempo de cómputo: ", "Profundidad del árbol: ", "Nodos expandidos: "]
+        self.textos = ["Tiempo de cómputo: ",
+                       "Profundidad del árbol: ", "Nodos expandidos: "]
         self.resultados = ["", "", ""]
         # Inicializamos imagenes
         self.bowser = None
@@ -106,7 +112,7 @@ class Interfaz:
         self.avara = None
         self.a_estrella = None
         self.inicializar_botones()
-        self.busuqeda = Busqueda(self.grid_inicial)
+        self.busqueda = Busqueda(self.grid_inicial)
 
     def inicializar_imagenes(self):
         self.mario = pygame.image.load("img/mario.png").convert()
@@ -121,7 +127,8 @@ class Interfaz:
         self.bowser.set_colorkey(self.NEGRO)
         self.img_busq_no_inf = pygame.image.load("img/boton1.png").convert()
         self.img_busq_no_inf.set_colorkey(self.NEGRO)
-        self.img_busq_no_inf_2 = pygame.image.load("img/boton1_2.png").convert()
+        self.img_busq_no_inf_2 = pygame.image.load(
+            "img/boton1_2.png").convert()
         self.img_busq_no_inf_2.set_colorkey(self.NEGRO)
         self.img_busq_inf = pygame.image.load("img/boton2.png").convert()
         self.img_busq_inf.set_colorkey(self.NEGRO)
@@ -137,7 +144,8 @@ class Interfaz:
         self.img_costo_u_2.set_colorkey(self.NEGRO)
         self.img_profundidad = pygame.image.load("img/boton5.png").convert()
         self.img_profundidad.set_colorkey(self.NEGRO)
-        self.img_profundidad_2 = pygame.image.load("img/boton5_2.png").convert()
+        self.img_profundidad_2 = pygame.image.load(
+            "img/boton5_2.png").convert()
         self.img_profundidad_2.set_colorkey(self.NEGRO)
         self.img_avara = pygame.image.load("img/boton6.png").convert()
         self.img_avara.set_colorkey(self.NEGRO)
@@ -154,19 +162,25 @@ class Interfaz:
 
     def inicializar_botones(self):
         # Botones
-        self.atras = Button(self.img_atras, self.img_atras_2, self.dimension_ventana[0] - 200, (self.dimension_ventana[1]/2) -50)
+        self.atras = Button(self.img_atras, self.img_atras_2,
+                            self.dimension_ventana[0] - 200, (self.dimension_ventana[1]/2) - 50)
         pos_y_img = (self.margen * 10) * ((len(self.grid) / 2) - 1)
-        self.busqueda_no_inf = Button(self.img_busq_no_inf, self.img_busq_no_inf_2, 0, pos_y_img)
-        self.busqueda_inf = Button(self.img_busq_inf, self.img_busq_inf_2, 0, pos_y_img + 80)
-        #--------------------------------------------
+        self.busqueda_no_inf = Button(
+            self.img_busq_no_inf, self.img_busq_no_inf_2, 0, pos_y_img)
+        self.busqueda_inf = Button(
+            self.img_busq_inf, self.img_busq_inf_2, 0, pos_y_img + 80)
+        # --------------------------------------------
         self.avara = Button(self.img_avara, self.img_avara_2, 0, pos_y_img)
-        self.a_estrella = Button(self.img_a_est, self.img_a_est_2, 0, pos_y_img + 80)
+        self.a_estrella = Button(
+            self.img_a_est, self.img_a_est_2, 0, pos_y_img + 80)
         # --------------------------------------------
         pos_y_img = (self.margen * 10) * (len(self.grid) / 3)
-        self.amplitud = Button(self.img_amplitud, self.img_amplitud_2, 0, pos_y_img)
-        self.costo = Button(self.img_costo_u, self.img_costo_u_2, 0, pos_y_img + 80)
-        self.profundidad = Button(self.img_profundidad, self.img_profundidad_2, 0, pos_y_img + 160)
-
+        self.amplitud = Button(
+            self.img_amplitud, self.img_amplitud_2, 0, pos_y_img)
+        self.costo = Button(
+            self.img_costo_u, self.img_costo_u_2, 0, pos_y_img + 80)
+        self.profundidad = Button(
+            self.img_profundidad, self.img_profundidad_2, 0, pos_y_img + 160)
 
     def set_pos_ant(self):
         pos_ant = list(map(lambda x: x[0], np.where(self.grid == 2)))
@@ -192,52 +206,75 @@ class Interfaz:
                         self.pasos = []
                         self.grid = self.grid_inicial
                         self.resultados = ["", "", ""]
-                        self.busuqeda.reset_result()
+                        self.busqueda.reset_result()
                     if self.cursor.colliderect(self.busqueda_no_inf):
                         self.estado_interfaz = 1
                     if self.cursor.colliderect(self.busqueda_inf):
                         self.estado_interfaz = 2
                     if self.cursor.colliderect(self.amplitud):
                         inicio = time.time()
-                        self.pasos = self.busuqeda.bfs()
-                        self.busuqeda.reset_result()
+                        self.paso_actual = 0
+                        info = self.busqueda.bfs()
+                        self.pasos = info['pasos']
+                        self.busqueda.reset_result()
                         self.pasos.reverse()
                         fin = time.time()
                         self.grid = self.pasos[0]
                         self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
+                        self.resultados[1] = info['profundidad']
+                        self.resultados[2] = info['cant_nodos_expandidos']
+
                     if self.cursor.colliderect(self.costo):
                         inicio = time.time()
-                        self.pasos = self.busuqeda.ucs()
-                        self.busuqeda.reset_result()
+                        self.paso_actual = 0
+                        info = self.busqueda.ucs()
+                        self.pasos = info['pasos']
+                        self.busqueda.reset_result()
                         self.pasos.reverse()
                         fin = time.time()
                         self.grid = self.pasos[0]
                         self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
+                        self.resultados[1] = info['profundidad']
+                        self.resultados[2] = info['cant_nodos_expandidos']
+
                     if self.cursor.colliderect(self.profundidad):
                         inicio = time.time()
-                        self.pasos = self.busuqeda.dfs()
-                        self.busuqeda.reset_result()
+                        self.paso_actual = 0
+                        info = self.busqueda.dfs()
+                        self.pasos = info['pasos']
+                        self.busqueda.reset_result()
                         self.pasos.reverse()
                         fin = time.time()
                         self.grid = self.pasos[0]
                         self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
+                        self.resultados[1] = info['profundidad']
+                        self.resultados[2] = info['cant_nodos_expandidos']
+
                     if self.cursor.colliderect(self.avara):
                         inicio = time.time()
-                        self.pasos = self.busuqeda.avara()
-                        self.busuqeda.reset_result()
+                        self.paso_actual = 0
+                        info = self.busqueda.avara()
+                        self.pasos = info['pasos']
+                        self.busqueda.reset_result()
                         self.pasos.reverse()
                         fin = time.time()
                         self.grid = self.pasos[0]
                         self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
+                        self.resultados[1] = info['profundidad']
+                        self.resultados[2] = info['cant_nodos_expandidos']
 
                     if self.cursor.colliderect(self.a_estrella):
                         inicio = time.time()
-                        self.pasos = self.busuqeda.a_estrella()
-                        self.busuqeda.reset_result()
+                        self.paso_actual = 0
+                        info = self.busqueda.a_estrella()
+                        self.pasos = info['pasos']
+                        self.busqueda.reset_result()
                         self.pasos.reverse()
                         fin = time.time()
                         self.grid = self.pasos[0]
                         self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
+                        self.resultados[1] = info['profundidad']
+                        self.resultados[2] = info['cant_nodos_expandidos']
 
             if evento.type == pygame.KEYDOWN:
                 if len(self.pasos) > 0:
@@ -274,7 +311,8 @@ class Interfaz:
                 pygame.draw.rect(self.pantalla,
                                  color,
                                  [(self.margen + self.largo) * columna + self.margen + 200,
-                                  (self.margen + self.alto) * fila + self.margen,
+                                  (self.margen + self.alto) *
+                                  fila + self.margen,
                                   self.largo,
                                   self.alto])
 
@@ -305,14 +343,22 @@ class Interfaz:
 
             # actualizar rectangulo de cursor
             self.cursor.updatecursor()
-            self.busqueda_no_inf.update(self.pantalla, self.cursor, self.estado_interfaz == 0)
-            self.busqueda_inf.update(self.pantalla, self.cursor, self.estado_interfaz == 0)
-            self.atras.update(self.pantalla, self.cursor, self.estado_interfaz != 0)
-            self.amplitud.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
-            self.costo.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
-            self.profundidad.update(self.pantalla, self.cursor, self.estado_interfaz == 1)
-            self.avara.update(self.pantalla, self.cursor, self.estado_interfaz == 2)
-            self.a_estrella.update(self.pantalla, self.cursor, self.estado_interfaz == 2)
+            self.busqueda_no_inf.update(
+                self.pantalla, self.cursor, self.estado_interfaz == 0)
+            self.busqueda_inf.update(
+                self.pantalla, self.cursor, self.estado_interfaz == 0)
+            self.atras.update(self.pantalla, self.cursor,
+                              self.estado_interfaz != 0)
+            self.amplitud.update(self.pantalla, self.cursor,
+                                 self.estado_interfaz == 1)
+            self.costo.update(self.pantalla, self.cursor,
+                              self.estado_interfaz == 1)
+            self.profundidad.update(
+                self.pantalla, self.cursor, self.estado_interfaz == 1)
+            self.avara.update(self.pantalla, self.cursor,
+                              self.estado_interfaz == 2)
+            self.a_estrella.update(
+                self.pantalla, self.cursor, self.estado_interfaz == 2)
             pos_x = 0
             for index, texto in enumerate(self.textos):
                 if index == 1:
@@ -321,11 +367,10 @@ class Interfaz:
                     pos_x = self.dimension_ventana[0] - 200
 
                 self.pantalla.blit(
-                    self.fuente.render(texto + str(self.resultados[index]), 0, self.BLANCO),
-                    (pos_x , self.dimension_ventana[1] - 50)
+                    self.fuente.render(
+                        texto + str(self.resultados[index]), 0, self.BLANCO),
+                    (pos_x, self.dimension_ventana[1] - 50)
                 )
-
-
 
             # Avanzamos y actualizamos la pantalla con lo que hemos dibujado.
             pygame.display.flip()
@@ -335,6 +380,7 @@ class Interfaz:
 
     def show_window(self):
         self.main_loop()
+
 
 grid = np.loadtxt('entorno.txt', dtype=int)
 Interfaz(grid=grid).show_window()

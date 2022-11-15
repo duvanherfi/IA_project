@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Nodo:
-    def __init__(self, entorno, padre=None, costo=0, estrella=0, flor=0, pisando=0):
+    def __init__(self, entorno, padre=None, profundidad=0, costo=0, estrella=0, flor=0, pisando=0):
         # • 0 ->  una casilla libre
         # • 1 ->  un muro
         # • 2 ->  punto donde inicia Mario
@@ -16,6 +16,7 @@ class Nodo:
         self.estrella = estrella
         self.flor = flor
         self.pisando = pisando
+        self.profundidad = profundidad
 
     def __str__(self):
         self.mostrar()
@@ -80,6 +81,11 @@ class Nodo:
         else:
             return self.costo + self.padre.costoAcumulado()
 
+    def profundidadAcumulada(self):
+        if (self.padre == None):
+            return self.profundidad
+        else:
+            return self.profundidad + self.padre.profundidadAcumulada()
+
     def heuristica(self, goal):
         return sum(np.absolute(goal - self.posm()))
-
