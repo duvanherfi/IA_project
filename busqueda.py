@@ -31,7 +31,7 @@ class Busqueda:
         else:
             return self.evitar_ciclos(nodo, padre.padre)
 
-    def usarOperadores(self, posicion, nodo_expandido, mover, stack, arbol, inverso=False):
+    def usarOperadores(self, posicion, nodo_expandido, mover, stack, arbol, es_profundidad=False, evitar_ciclo=False):
         _duracion_estrella = nodo_expandido.estrella
         _cantidad_flor = nodo_expandido.flor
         _pisando = 0
@@ -65,16 +65,25 @@ class Busqueda:
                     _costo_paso, _duracion_estrella, _cantidad_flor, _pisando)
 
         if not (nodo_expandido.padre != None and np.array_equal(nodo_expandido.padre.entorno, hijo.entorno)):
-            if self.evitar_ciclos(hijo, nodo_expandido) != 1:
-                if inverso:
-                    stack.insert(self.pila_index, hijo)
+            if evitar_ciclo:
+                if self.evitar_ciclos(hijo, nodo_expandido) != 1:
+                    if es_profundidad:
+                        self.stack.insert(self.pila_index, hijo)
+                        self.pila_index += 1
+                        self.arbol.append(hijo)
+                    else:
+                        self.stack.append(hijo)
+                        self.arbol.append(hijo)
+            else:
+                if es_profundidad:
+                    self.stack.insert(self.pila_index, hijo)
                     self.pila_index += 1
-                    arbol.append(hijo)
+                    self.arbol.append(hijo)
                 else:
-                    stack.append(hijo)
-                    arbol.append(hijo)
+                    self.stack.append(hijo)
+                    self.arbol.append(hijo)
 
-                return hijo
+                    return hijo
 
         return -1
 
@@ -88,7 +97,7 @@ class Busqueda:
         else:
             return self.ver_solucion(padre)
 
-    def movimientos(self, nodo_expandido, inverso=False):
+    def movimientos(self, nodo_expandido, es_profundidad=False, evitar_ciclos=False):
         profundidad = nodo_expandido.profundidadAcumulada()
 
         # Izquierda
@@ -100,7 +109,7 @@ class Busqueda:
             # Comprobar si no hay un muro
             if posicion != 1:
                 hijo = self.usarOperadores(
-                    posicion, nodo_expandido, 1, self.stack, self.arbol, inverso)
+                    posicion, nodo_expandido, 1, self.stack, self.arbol, es_profundidad, evitar_ciclos)
 
                 # No existe hijo
                 if (hijo != -1):
@@ -115,7 +124,7 @@ class Busqueda:
             # Comprobar si no hay un muro
             if posicion != 1:
                 hijo = self.usarOperadores(
-                    posicion, nodo_expandido, 2, self.stack, self.arbol, inverso)
+                    posicion, nodo_expandido, 2, self.stack, self.arbol, es_profundidad, evitar_ciclos)
 
                 # No existe hijo
                 if (hijo != -1):
@@ -130,7 +139,7 @@ class Busqueda:
             # Comprobar si no hay un muro
             if posicion != 1:
                 hijo = self.usarOperadores(
-                    posicion, nodo_expandido, 3, self.stack, self.arbol, inverso)
+                    posicion, nodo_expandido, 3, self.stack, self.arbol, es_profundidad, evitar_ciclos)
 
                 # No existe hijo
                 if (hijo != -1):
@@ -145,7 +154,7 @@ class Busqueda:
             # Comprobar si no hay un muro
             if posicion != 1:
                 hijo = self.usarOperadores(
-                    posicion, nodo_expandido, 4, self.stack, self.arbol, inverso)
+                    posicion, nodo_expandido, 4, self.stack, self.arbol, es_profundidad, evitar_ciclos)
 
                 # No existe hijo
                 if (hijo != -1):
@@ -242,7 +251,7 @@ class Busqueda:
                 }
             else:
                 profundidadAcumulada = self.movimientos(
-                    self.nodo_expandido, True)
+                    self.nodo_expandido, True, True)
                 if profundidadAcumulada > profundidad:
                     profundidad = profundidadAcumulada
             print('-----------------------------')
@@ -276,7 +285,7 @@ class Busqueda:
                     'profundidad': profundidad
                 }
             else:
-                profundidadAcumulada = self.movimientos(self.nodo_expandido)
+                profundidadAcumulada = self.movimientos(self.nodo_expandido, evitar_ciclos=True)
                 if profundidadAcumulada > profundidad:
                     profundidad = profundidadAcumulada
             print('-----------------------------')
