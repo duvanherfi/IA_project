@@ -88,4 +88,4 @@ class Nodo:
             return self.profundidad + self.padre.profundidadAcumulada()
 
     def heuristica(self, goal):
-        return sum(np.absolute(goal - self.posm()))
+        return sum(np.absolute(goal - self.posm()))/2
