@@ -113,6 +113,7 @@ class Interfaz:
         self.a_estrella = None
         self.inicializar_botones()
         self.busqueda = Busqueda(self.grid_inicial)
+        self.mostrar = False
 
     def inicializar_imagenes(self):
         self.mario = pygame.image.load("img/mario.png").convert()
@@ -190,10 +191,22 @@ class Interfaz:
         op = self.paso_actual + paso
         if op >= len(self.pasos):
             self.paso_actual = 0
+            self.mostrar = False
         elif op < 0:
             self.paso_actual = len(self.pasos) - 1
         else:
             self.paso_actual = op
+
+    def post_search(self, info, tiempo):
+        self.pasos = info['pasos']
+        self.busqueda.reset_result()
+        self.pasos.reverse()
+        self.mostrar = True
+
+        self.grid = self.pasos[0]
+        self.resultados[0] = f"{round(tiempo, 3)}Seg"
+        self.resultados[1] = info['profundidad']
+        self.resultados[2] = info['cant_nodos_expandidos']
 
     def loop_events(self):
         for evento in pygame.event.get():
@@ -212,69 +225,40 @@ class Interfaz:
                     if self.cursor.colliderect(self.busqueda_inf):
                         self.estado_interfaz = 2
                     if self.cursor.colliderect(self.amplitud):
-                        inicio = time.time()
                         self.paso_actual = 0
+                        inicio = time.time()
                         info = self.busqueda.bfs()
-                        self.pasos = info['pasos']
-                        self.busqueda.reset_result()
-                        self.pasos.reverse()
                         fin = time.time()
-                        self.grid = self.pasos[0]
-                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
-                        self.resultados[1] = info['profundidad']
-                        self.resultados[2] = info['cant_nodos_expandidos']
+                        self.post_search(info, fin - inicio)
 
                     if self.cursor.colliderect(self.costo):
-                        inicio = time.time()
                         self.paso_actual = 0
+                        inicio = time.time()
                         info = self.busqueda.ucs()
-                        self.pasos = info['pasos']
-                        self.busqueda.reset_result()
-                        self.pasos.reverse()
                         fin = time.time()
-                        self.grid = self.pasos[0]
-                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
-                        self.resultados[1] = info['profundidad']
-                        self.resultados[2] = info['cant_nodos_expandidos']
+                        self.post_search(info, fin - inicio)
 
                     if self.cursor.colliderect(self.profundidad):
-                        inicio = time.time()
                         self.paso_actual = 0
+                        inicio = time.time()
                         info = self.busqueda.dfs()
-                        self.pasos = info['pasos']
-                        self.busqueda.reset_result()
-                        self.pasos.reverse()
                         fin = time.time()
-                        self.grid = self.pasos[0]
-                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
-                        self.resultados[1] = info['profundidad']
-                        self.resultados[2] = info['cant_nodos_expandidos']
+                        self.post_search(info, fin - inicio)
 
                     if self.cursor.colliderect(self.avara):
-                        inicio = time.time()
                         self.paso_actual = 0
+                        inicio = time.time()
                         info = self.busqueda.avara()
-                        self.pasos = info['pasos']
-                        self.busqueda.reset_result()
-                        self.pasos.reverse()
                         fin = time.time()
-                        self.grid = self.pasos[0]
-                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
-                        self.resultados[1] = info['profundidad']
-                        self.resultados[2] = info['cant_nodos_expandidos']
+                        self.post_search(info, fin - inicio)
 
                     if self.cursor.colliderect(self.a_estrella):
-                        inicio = time.time()
                         self.paso_actual = 0
+                        inicio = time.time()
                         info = self.busqueda.a_estrella()
-                        self.pasos = info['pasos']
-                        self.busqueda.reset_result()
-                        self.pasos.reverse()
                         fin = time.time()
-                        self.grid = self.pasos[0]
-                        self.resultados[0] = f"{round(fin - inicio, 3)}Seg"
-                        self.resultados[1] = info['profundidad']
-                        self.resultados[2] = info['cant_nodos_expandidos']
+                        self.post_search(info, fin - inicio)
+
 
             if evento.type == pygame.KEYDOWN:
                 if len(self.pasos) > 0:
@@ -333,13 +317,17 @@ class Interfaz:
         while not self.salir:
             self.loop_events()
 
+            if self.mostrar:
+                self.update_pos_pasos(1)
+                self.reloj.tick(4)
+            else:
+                # Limitamos a 60 fotogramas por segundo.
+                self.reloj.tick(60)
+
             # Establecemos el fondo de pantalla.
             self.pantalla.fill(self.NEGRO)
 
             self.draw_loop()
-
-            # Limitamos a 60 fotogramas por segundo.
-            self.reloj.tick(60)
 
             # actualizar rectangulo de cursor
             self.cursor.updatecursor()
