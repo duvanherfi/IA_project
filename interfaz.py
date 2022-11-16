@@ -73,7 +73,7 @@ class Interfaz:
         # Se usa para saber que botones se muestran
         self.estado_interfaz = 0
         # Texto informes
-        self.fuente = pygame.font.SysFont("Gabriola", 22)
+        self.fuente = pygame.font.SysFont("Gabriola", 27)
         self.textos = ["Tiempo de cómputo: ",
                        "Profundidad del árbol: ", "Nodos expandidos: "]
         self.resultados = ["", "", ""]
