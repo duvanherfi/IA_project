@@ -63,9 +63,10 @@ class Interfaz:
         largo_m = len(self.grid[0])
         margen_total = ((self.margen * 10) + 5)
         # Establecemos el LARGO y ALTO de la pantalla
+        flags = pygame.RESIZABLE | pygame.SCALED
         self.dimension_ventana = [
             400 + (largo_m * margen_total), 200 + (alto_m * margen_total)]
-        self.pantalla = pygame.display.set_mode(self.dimension_ventana)
+        self.pantalla = pygame.display.set_mode(self.dimension_ventana, flags)
         # Establecemos el título de la pantalla.
         pygame.display.set_caption("Proyecto 1 IA")
         # Lo usamos para establecer cuán rápido de refresca la pantalla.
